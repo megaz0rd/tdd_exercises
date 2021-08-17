@@ -1,12 +1,22 @@
 from selenium import webdriver
+import unittest
 
-browser = webdriver.Firefox()
+class NewVisitorTest(unittest.TestCase):
 
-# Użytkownik dowiaduje się o aplikacji "To-do-list" i wchodzi na stronę
-browser.get('http://127.0.0.1:8000')
+    def setUp(self):
+        self.browser = webdriver.Firefox()
 
-# Zwraca uwagę, że tytuł strony i nagłówek zawierają słowo Listy
-assert "Listy" in browser.title
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_can_start_a_list_and_retrive_it_later(self):
+        # Użytkownik dowiaduje się o aplikacji "To-do-list" i wchodzi na stronę
+        self.browser.get('http://127.0.0.1:8000')
+        self.browser.implicitly_wait(3)
+
+        # Zwraca uwagę, że tytuł strony i nagłówek zawierają słowo Listy
+        self.assertIn("Listy", self.browser.title)
+        self.fail('Zakończenie testu!')
 
 # Od razu zostaje zachęcony, aby wpisać rzeczy do zrobienia
 
@@ -28,4 +38,7 @@ assert "Listy" in browser.title
 
 # Użytkownik kończy przygodę z listą
 
-browser.quit()
+# browser.quit()
+
+if __name__ == '__main__':
+    unittest.main()
