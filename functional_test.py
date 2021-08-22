@@ -1,3 +1,5 @@
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
@@ -31,33 +33,39 @@ class NewVisitorTest(unittest.TestCase):
         # W polu tekstowym wpisał "Zrobić zakupy na obiad"
         inputbox.send_keys('Zrobić zakupy na obiad')
 
-        # Po naciśnieęciu klawisza Enter strona została uaktualniona i wyświetla 
+        # Po naciśnięciu klawisza Enter strona została uaktualniona i wyświetla 
         # '1: Zrobić zakupy na obiad'
         inputbox.send_keys(Keys.ENTER)
+        time.sleep(3)
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: Zrobić zakupy na obiad' for row in rows),
-            "Nowy element nie znajduje się w tabeli"
-        )
+        self.assertIn('1: Zrobić zakupy na obiad', [row.text for row in rows])
 
         # Na stronie nadal znajduje się pole tekstowe zachęcające do podania 
         # kolejnego zadania. Użytkownik wpisuje więc 'Ugotować z zakupionych
         # produktów obiad'
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Ugotować z zakupionych produktów obiad')
+        inputbox.send_keys(Keys.ENTER)
+        
+        # Strona ponownie została zaktualizowana i wyświetla już dwa elementy z
+        # listy do zrobienia
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1: Zrobić zakupy na obiad', [row.text for row in rows])
+        self.assertIn('2: Ugotować z zakupionych produktów obiad', 
+                [row.text for row in rows])
+        
+        # Użytkownik był ciekaw czy witryna zapamięta jego listę. Zwraca uwagę 
+        # na unikatowy adres URL z tekstem
         self.fail('Zakończenie testu!')
 
-# Strona ponownie została zaktualizowana i wyświetla już dwa elementy z listy 
-# do zrobienia
+        # Przechodzi pod podany adres i widzi swoją listę
 
-# Użytkownik był ciekaw czy witryna zapamięta jego listę. Zwraca uwagę na 
-# unikatowy adres URL z tekstem
+        # Użytkownik kończy przygodę z listą
 
-# Przechodzi pod podany adres i widzi swoją listę
-
-# Użytkownik kończy przygodę z listą
-
-# browser.quit()
+        # browser.quit()
 
 if __name__ == '__main__':
     unittest.main()
