@@ -27,7 +27,7 @@ class NewVisitorTest(LiveServerTestCase):
         # Zwraca uwagę, że tytuł strony i nagłówek zawierają słowo Listy
         self.assertIn("Listy", self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h1').text
-        self.assertIn("Listy", header_text)
+        self.assertIn("Utwórz", header_text)
 
         # Od razu zostaje zachęcony, aby wpisać rzeczy do zrobienia
         inputbox = self.browser.find_element_by_id('id_new_item')
