@@ -43,6 +43,9 @@ class NewVisitorTest(LiveServerTestCase):
         # '1: Zrobić zakupy na obiad'
         inputbox.send_keys(Keys.ENTER)
         time.sleep(3)
+
+        user_list_url = self.browser.current_url
+        self.assertRegex(user_list_url, '/lists/.+')
         self.check_for_row_in_list_table('1: Zrobić zakupy na obiad')
 
         # Na stronie nadal znajduje się pole tekstowe zachęcające do podania 
@@ -60,12 +63,35 @@ class NewVisitorTest(LiveServerTestCase):
             '2: Ugotować z zakupionych produktów obiad'
             )
         
-        # Użytkownik był ciekaw czy witryna zapamięta jego listę. Zwraca uwagę 
-        # na unikatowy adres URL z tekstem
-        self.fail('Zakończenie testu!')
+        # Nowy użytkownij zaczyna korzystać z witryny
 
-        # Przechodzi pod podany adres i widzi swoją listę
+        ## Używamy nowej sesji przeglądarki, aby mieć pewność, że żadne
+        ## informacje dotyczące poprzednego użytkownika nie zostaną ujawnione
+        ## np. przez cookies
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
 
-        # Użytkownik kończy przygodę z listą
+        # Nowy użytkownik odwiedza stronę główną
+        # Nie ma tam żadnych śladów list innego użytkownika
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Zrobić zakupy na obiad', page_text)
+        self.assertNotIn('Posprzątać pokój', page_text)
 
-        # browser.quit()
+        # Nowy użytkownik tworzy listę, wprowadzając nowy element.
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Zrobić pranie')
+        inputbox.send_keys(Keys.ENTER)
+
+        # Nowy użytkownik otrzymuje unikatowy adres URL do listy
+        newuser_list_url = self.browser.current_url
+        self.assertRegex(newuser_list_url, '/lists/.+')
+        self.assertNotEqual(newuser_list_url, user_list_url)
+
+        # Ponownie brak jakiegokolwiek śladu po liście poprzedniego użytkownika
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Zrobić zakupy na obiad', page_text)
+        self.assertIn('Zrobić pranie', page_text)
+
+        # Obaj użytkownicy kończą pracę
+        
