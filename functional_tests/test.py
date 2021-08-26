@@ -42,7 +42,7 @@ class NewVisitorTest(LiveServerTestCase):
         # Po naciśnięciu klawisza Enter strona została uaktualniona i wyświetla 
         # '1: Zrobić zakupy na obiad'
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(3)
+        time.sleep(1)
 
         user_list_url = self.browser.current_url
         self.assertRegex(user_list_url, '/lists/.+')
@@ -54,7 +54,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Ugotować z zakupionych produktów obiad')
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(3)
+        time.sleep(1)
 
         # Strona ponownie została zaktualizowana i wyświetla już dwa elementy z
         # listy do zrobienia
@@ -82,6 +82,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Zrobić pranie')
         inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # Nowy użytkownik otrzymuje unikatowy adres URL do listy
         newuser_list_url = self.browser.current_url
