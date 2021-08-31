@@ -5,6 +5,6 @@ from lists.views import home_page
 
 urlpatterns = [
     path('', home_page, name='home'),
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('lists/', include('lists.urls'))
 ]
